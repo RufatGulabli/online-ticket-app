@@ -1,7 +1,7 @@
-=================================
-===  TO RUN THIS APPLICATION  ===
-===    IN LOCAL ENVIRONMENT   ===
-=================================
+=================================\n
+===  TO RUN THIS APPLICATION  ==\n
+===    IN LOCAL ENVIRONMENT   ===\n
+=================================\n
 
 1. Create .env file and set your credentials.
 
