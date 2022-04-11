@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: postgres:13.5-alpine
+    restart: always
+    env_file: .env
+    volumes:
+      ## Postgres image runs all files from /docker-entrypoint-initdb.d on container creation
+      # So it is the easiest way to create additional testing database
+      - ./docker/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 54321:5432

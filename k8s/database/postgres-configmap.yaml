@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: ticketworld
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: uhFHga2QxMB2pC4T
