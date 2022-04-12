@@ -1,13 +1,15 @@
-import { ReservationStatus } from 'src/Utils/enums';
 import {
   Column,
   Entity,
   Generated,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { ReservationStatus } from '../../../Utils/enums';
+import { Customer } from '../../customer/entity/customer.entity';
 import { Event } from '../../event/entity/event.entity';
 
 @Entity('reservations')
@@ -22,8 +24,11 @@ export class Reservation {
   })
   status: ReservationStatus;
 
-  @Generated('uuid')
+  @Column({name: 'created_at', type: 'timestamp'})
+  createdAt: Date
+
   @Column({ name: 'booking_reference' })
+  @Generated('uuid')
   bookingReference: string;
 
   @Column('timestamp')
@@ -32,4 +37,7 @@ export class Reservation {
   @ManyToOne(() => Event, (event) => event.reservations)
   @JoinColumn({ name: 'event_id' })
   event: Event;
+
+  @OneToMany(() => Customer, (customer) => customer.reservation)
+  customers: Customer[];
 }

@@ -2,6 +2,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateInitialTables1649277945107 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+
     await queryRunner.query(`
         CREATE TABLE IF NOT EXISTS venues (
             id serial PRIMARY KEY,
@@ -41,7 +43,7 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
             last_seat_in_row BOOLEAN NOT NULL,
             sign VARCHAR (4) NOT NULL,
             venue_id INT NOT NULL,
-            FOREIGN KEY (venue_id) REFERENCES venues (id) ON DELETE CASCADE,
+            FOREIGN KEY (venue_id) REFERENCES venues (id) ON DELETE CASCADE ON UPDATE CASCADE,
             UNIQUE (venue_id, sign)
         );
     `);
@@ -55,8 +57,8 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
             id serial PRIMARY KEY,
             event_id INT NOT NULL,
             status ReservationStatus NOT NULL DEFAULT 'PENDING_PAYMENT',
-            booking_reference VARCHAR (16) NOT NULL,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            booking_reference uuid NOT NULL DEFAULT uuid_generate_v4(),
+            created_at TIMESTAMP DEFAULT NOW(),
             deadline TIMESTAMP NOT NULL
         );
     `);
@@ -64,11 +66,13 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
     await queryRunner.query(`
         CREATE TABLE IF NOT EXISTS customers (
             id serial PRIMARY KEY,
-            firstName VARCHAR (64) NOT NULL,
-            lastName VARCHAR (64) NOT NULL,
+            first_name VARCHAR (64) NOT NULL,
+            last_name VARCHAR (64) NOT NULL,
             email VARCHAR (128),
+            seat_id INT NOT NULL,
             reservation_id INT NOT NULL,
-            FOREIGN KEY (reservation_id) REFERENCES reservations (id)
+            FOREIGN KEY (reservation_id) REFERENCES reservations (id),
+            FOREIGN KEY (seat_id) REFERENCES seat_structures (id)
         );
     `);
 
@@ -82,7 +86,7 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
             customer_id INT,
             reservation_id INT,
             seat_id INT NOT NULL,
-            FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
+            FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE ON UPDATE CASCADE,
             FOREIGN KEY (customer_id) REFERENCES customers (id),
             FOREIGN KEY (reservation_id) REFERENCES reservations (id),
             FOREIGN KEY (seat_id) REFERENCES seat_structures (id)

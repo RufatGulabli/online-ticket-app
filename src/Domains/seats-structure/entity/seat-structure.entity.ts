@@ -1,13 +1,13 @@
-import { Ticket } from 'src/Domains/ticket/entity/ticket.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 
+import { Ticket } from '../../ticket/entity/ticket.entity';
 import { Venue } from '../../venue/entity/venue.entity';
 
 @Entity('seat_structures')
