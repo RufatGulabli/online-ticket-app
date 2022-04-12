@@ -9,13 +9,13 @@ import { CrudConfigService } from '@nestjsx/crud';
 CrudConfigService.load({
   query: {
     limit: 10,
-    cache: 100,
+    cache: 100
   },
   routes: {
     deleteOneBase: {
-      returnDeleted: true,
-    },
-  },
+      returnDeleted: true
+    }
+  }
 });
 
 import { AppModule } from './app.module';

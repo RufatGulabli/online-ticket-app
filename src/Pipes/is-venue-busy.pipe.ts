@@ -13,13 +13,13 @@ export class IsVenueBusyOnThisDate implements PipeTransform {
       .createQueryBuilder()
       .where('venue_id = :venueId AND event_date::date = :dtoDate::date', {
         venueId: dto.venueId,
-        dtoDate: dto.eventDate,
+        dtoDate: dto.eventDate
       })
       .getOne();
 
     if (event) {
       throw new BadRequestException(
-        'There is another registered event on the same date in this venue.',
+        'There is another registered event on the same date in this venue.'
       );
     }
 

@@ -49,7 +49,7 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
     `);
 
     await queryRunner.query(
-      `CREATE TYPE ReservationStatus AS ENUM ('PENDING_PAYMENT', 'EXPIRED', 'APPROVED')`,
+      `CREATE TYPE ReservationStatus AS ENUM ('PENDING_PAYMENT', 'EXPIRED', 'APPROVED')`
     );
 
     await queryRunner.query(`
@@ -58,7 +58,7 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
             event_id INT NOT NULL,
             status ReservationStatus NOT NULL DEFAULT 'PENDING_PAYMENT',
             booking_reference uuid NOT NULL DEFAULT uuid_generate_v4(),
-            created_at TIMESTAMP DEFAULT NOW(),
+            created_at TIMESTAMP NOT NULL,
             deadline TIMESTAMP NOT NULL
         );
     `);
@@ -72,7 +72,8 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
             seat_id INT NOT NULL,
             reservation_id INT NOT NULL,
             FOREIGN KEY (reservation_id) REFERENCES reservations (id),
-            FOREIGN KEY (seat_id) REFERENCES seat_structures (id)
+            FOREIGN KEY (seat_id) REFERENCES seat_structures (id),
+            UNIQUE (seat_id, reservation_id)
         );
     `);
 
@@ -92,9 +93,23 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
             FOREIGN KEY (seat_id) REFERENCES seat_structures (id)
         );
     `);
+
+    await queryRunner.query(`
+        CREATE TABLE IF NOT EXISTS payments (
+            id serial PRIMARY KEY,
+            amount NUMERIC (7, 2) NOT NULL,
+            status BOOLEAN NOT NULL,
+            rejection_reason VARCHAR(32) NOT NULL,
+            transaction_no VARCHAR(16) NOT NULL,
+            create_date TIMESTAMP NOT NULL,
+            reservation_id INT NOT NULL,
+            FOREIGN KEY (reservation_id) REFERENCES reservations (id)
+        )
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE payments`);
     await queryRunner.query(`DROP TABLE tickets`);
     await queryRunner.query(`DROP TABLE customers`);
     await queryRunner.query(`DROP TABLE reservations`);

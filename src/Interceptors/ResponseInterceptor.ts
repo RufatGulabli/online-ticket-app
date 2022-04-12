@@ -2,7 +2,7 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
-  NestInterceptor,
+  NestInterceptor
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 
@@ -10,13 +10,13 @@ import { map, Observable } from 'rxjs';
 export class ResponseInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
-    next: CallHandler<any>,
+    next: CallHandler<any>
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       map((res) => ({
         success: true,
-        data: res ?? null,
-      })),
+        data: res ?? null
+      }))
     );
   }
 }

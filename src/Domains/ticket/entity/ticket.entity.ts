@@ -5,10 +5,13 @@ import {
   Generated,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  OneToOne,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 
 import { Event } from '../../event/entity/event.entity';
+import { Reservation } from '../../reservation/entity/reservation.entity';
+import { Customer } from '../../customer/entity/customer.entity';
 
 @Entity('tickets')
 export class Ticket {
@@ -22,7 +25,7 @@ export class Ticket {
   @Generated('uuid')
   ticketNumber: string;
 
-  @Column()
+  @Column('numeric')
   price: number;
 
   @ManyToOne(() => Event, (event) => event.tickets)
@@ -32,4 +35,12 @@ export class Ticket {
   @ManyToOne(() => SeatStructure, (seat) => seat.ticket)
   @JoinColumn({ name: 'seat_id' })
   seat: SeatStructure;
+
+  @ManyToOne(() => Reservation, (reservation) => reservation.tickets)
+  @JoinColumn({ name: 'reservation_id' })
+  reservation: Reservation;
+
+  @OneToOne(() => Customer)
+  @JoinColumn({ name: 'customer_id' })
+  customer: Customer;
 }

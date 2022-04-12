@@ -5,7 +5,7 @@ import {
   IsString,
   Length,
   Max,
-  Min,
+  Min
 } from 'class-validator';
 
 export class CreateSeatStructureDto {

@@ -9,12 +9,12 @@ import { EventService } from './event.service';
 
 @Crud({
   model: {
-    type: Event,
+    type: Event
   },
   dto: {
-    create: CreateEventDto,
+    create: CreateEventDto
   },
-  validation: { always: true },
+  validation: { always: true }
   // query: {
   //   join: {
   //     venue: {
@@ -33,7 +33,7 @@ export class EventController implements CrudController<Event> {
   @Override('createOneBase')
   async create(
     req: CrudRequest,
-    @Body(ValidationPipe, IsVenueBusyOnThisDate) dto: CreateEventDto,
+    @Body(ValidationPipe, IsVenueBusyOnThisDate) dto: CreateEventDto
   ): Promise<Event> {
     return await this.service.createOne(req, dto);
   }

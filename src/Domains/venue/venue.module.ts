@@ -11,6 +11,6 @@ import { SeatStructure } from '../seats-structure/entity/seat-structure.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Venue, Address, Event, SeatStructure])],
   controllers: [VenueController],
-  providers: [VenueService],
+  providers: [VenueService]
 })
 export class VenueModule {}

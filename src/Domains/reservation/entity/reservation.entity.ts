@@ -1,3 +1,4 @@
+import { Ticket } from 'src/Domains/ticket/entity/ticket.entity';
 import {
   Column,
   Entity,
@@ -5,7 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 
 import { ReservationStatus } from '../../../Utils/enums';
@@ -20,12 +21,12 @@ export class Reservation {
   @Column({
     type: 'enum',
     enum: ReservationStatus,
-    default: ReservationStatus.PENDING_PAYMENT,
+    default: ReservationStatus.PENDING_PAYMENT
   })
   status: ReservationStatus;
 
-  @Column({name: 'created_at', type: 'timestamp'})
-  createdAt: Date
+  @Column({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
 
   @Column({ name: 'booking_reference' })
   @Generated('uuid')
@@ -40,4 +41,7 @@ export class Reservation {
 
   @OneToMany(() => Customer, (customer) => customer.reservation)
   customers: Customer[];
+
+  @OneToMany(() => Ticket, (ticket) => ticket.reservation)
+  tickets: Ticket[];
 }

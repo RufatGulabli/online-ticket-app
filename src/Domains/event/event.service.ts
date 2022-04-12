@@ -20,7 +20,7 @@ export class EventService extends TypeOrmCrudService<Event> {
     @InjectRepository(SeatStructure)
     private seatRepo: Repository<SeatStructure>,
     @InjectRepository(Ticket)
-    private ticketRepo: Repository<Ticket>,
+    private ticketRepo: Repository<Ticket>
   ) {
     super(eventRepo);
   }
@@ -28,7 +28,7 @@ export class EventService extends TypeOrmCrudService<Event> {
   @Override()
   async createOne(
     req: CrudRequest,
-    dto: DeepPartial<CreateEventDto>,
+    dto: DeepPartial<CreateEventDto>
   ): Promise<Event> {
     return await getConnection().transaction(
       async (transactionalEntityManager) => {
@@ -37,12 +37,12 @@ export class EventService extends TypeOrmCrudService<Event> {
             description: dto.description,
             name: dto.name,
             eventDate: dto.eventDate,
-            duration: dto.duration,
+            duration: dto.duration
           });
 
           const venue = await this.venueRepo.findOneOrFail({
             where: { id: dto.venueId },
-            relations: ['seats', 'events'],
+            relations: ['seats', 'events']
           });
 
           newEvent.venue = venue;
@@ -50,7 +50,7 @@ export class EventService extends TypeOrmCrudService<Event> {
 
           const ticketProms: Promise<Ticket>[] = venue.seats.map((seat) => {
             const ticketNumber = Math.ceil(
-              Math.random() * 1000000000,
+              Math.random() * 1000000000
             ).toString();
 
             const ticket = this.ticketRepo.create({
@@ -58,7 +58,7 @@ export class EventService extends TypeOrmCrudService<Event> {
               price: dto.price,
               event: savedEvent,
               ticketNumber,
-              seat,
+              seat
             });
             return transactionalEntityManager.save(ticket);
           });
@@ -69,7 +69,7 @@ export class EventService extends TypeOrmCrudService<Event> {
         } catch (exc) {
           throw new BadRequestException(exc.message);
         }
-      },
+      }
     );
   }
 }

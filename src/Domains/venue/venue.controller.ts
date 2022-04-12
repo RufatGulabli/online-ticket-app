@@ -8,12 +8,12 @@ import { ApiTags } from '@nestjs/swagger';
 
 @Crud({
   model: {
-    type: Venue,
+    type: Venue
   },
   dto: {
-    create: CreateVenueDto,
+    create: CreateVenueDto
   },
-  validation: { always: true },
+  validation: { always: true }
   // query: {
   //   join: {
   //     address: {

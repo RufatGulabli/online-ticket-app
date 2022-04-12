@@ -17,7 +17,7 @@ export class VenueService extends TypeOrmCrudService<Venue> {
     @InjectRepository(Address)
     private addressRepo: Repository<Address>,
     @InjectRepository(SeatStructure)
-    private seatRepo: Repository<SeatStructure>,
+    private seatRepo: Repository<SeatStructure>
   ) {
     super(venueRepo);
   }
@@ -25,41 +25,41 @@ export class VenueService extends TypeOrmCrudService<Venue> {
   @Override()
   async createOne(
     req: CrudRequest,
-    dto: DeepPartial<CreateVenueDto>,
+    dto: DeepPartial<CreateVenueDto>
   ): Promise<Venue> {
     return await getConnection().transaction(
       async (transactionalEntityManager) => {
         try {
           // To prevent of creating addresses with the same ZIP code
           const isUniqueZIP = await this.addressRepo.findOne({
-            where: { zip: dto.zip },
+            where: { zip: dto.zip }
           });
 
           if (isUniqueZIP) {
             throw new BadRequestException(
-              `Address with zip code ${dto.zip} is already registered.`,
+              `Address with zip code ${dto.zip} is already registered.`
             );
           }
 
           // To prevent of creating venue with the same name
           const isUniqueVenueName = await this.venueRepo.findOne({
-            where: { name: dto.name },
+            where: { name: dto.name }
           });
 
           if (isUniqueVenueName) {
             throw new BadRequestException(
-              `Venue with the name '${dto.name}' is already registered.`,
+              `Venue with the name '${dto.name}' is already registered.`
             );
           }
 
           const venue = this.venueRepo.create({
             name: dto.name,
-            capacity: dto.capacity,
+            capacity: dto.capacity
           });
 
           if (dto.seats.length !== venue.capacity) {
             throw new BadRequestException(
-              'Number of seats is not equal to venue capacity.',
+              'Number of seats is not equal to venue capacity.'
             );
           }
 
@@ -73,11 +73,11 @@ export class VenueService extends TypeOrmCrudService<Venue> {
                 columnNo: s.columnNo,
                 lastSeatInRow: s.lastSeatInRow,
                 sign: `${s.rowNo}${s.columnNo}`,
-                venue,
+                venue
               });
 
               return transactionalEntityManager.save(newSeat);
-            },
+            }
           );
 
           await Promise.all(seatsPromises);
@@ -86,7 +86,7 @@ export class VenueService extends TypeOrmCrudService<Venue> {
             city: dto.city,
             street: dto.street,
             zip: dto.zip,
-            venue,
+            venue
           });
 
           await transactionalEntityManager.save(address);
@@ -95,7 +95,7 @@ export class VenueService extends TypeOrmCrudService<Venue> {
         } catch (exc) {
           throw new BadRequestException(exc.message);
         }
-      },
+      }
     );
   }
 }

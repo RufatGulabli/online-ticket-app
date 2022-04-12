@@ -11,9 +11,9 @@ import { Ticket } from '../ticket/entity/ticket.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Address, Venue, Event, SeatStructure, Ticket]),
+    TypeOrmModule.forFeature([Address, Venue, Event, SeatStructure, Ticket])
   ],
   controllers: [EventController],
-  providers: [EventService],
+  providers: [EventService]
 })
 export class EventModule {}
