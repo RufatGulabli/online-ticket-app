@@ -4,6 +4,12 @@ export enum ReservationStatus {
   APPROVED = 'APPROVED'
 }
 
+export enum TicketStatus {
+  FREE = 'FREE',
+  RESERVED = 'RESERVED',
+  TICKETED = 'TICKETED'
+}
+
 export interface PaymentDetails {
   reservationId: number;
   status: boolean;

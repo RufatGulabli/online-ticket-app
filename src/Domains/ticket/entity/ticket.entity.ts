@@ -9,17 +9,22 @@ import {
   PrimaryGeneratedColumn
 } from 'typeorm';
 
-import { Event } from '../../event/entity/event.entity';
+import { Concert } from '../../concert/entity/concert.entity';
 import { Reservation } from '../../reservation/entity/reservation.entity';
 import { Customer } from '../../customer/entity/customer.entity';
+import { TicketStatus } from 'src/Utils/enums';
 
 @Entity('tickets')
 export class Ticket {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  issued: boolean;
+  @Column({
+    type: 'enum',
+    enum: TicketStatus,
+    default: TicketStatus.FREE
+  })
+  issued: TicketStatus;
 
   @Column({ name: 'ticket_number' })
   @Generated('uuid')
@@ -28,9 +33,9 @@ export class Ticket {
   @Column('numeric')
   price: number;
 
-  @ManyToOne(() => Event, (event) => event.tickets)
-  @JoinColumn({ name: 'event_id' })
-  event: Event;
+  @ManyToOne(() => Concert, (concert) => concert.tickets)
+  @JoinColumn({ name: 'concert_id' })
+  concert: Concert;
 
   @ManyToOne(() => SeatStructure, (seat) => seat.ticket)
   @JoinColumn({ name: 'seat_id' })

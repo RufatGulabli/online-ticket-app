@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
 import { VenueModule } from './Domains/venue/venue.module';
-import { EventModule } from './Domains/event/event.module';
+import { ConcertModule } from './Domains/concert/concert.module';
 import { ReservationModule } from './Domains/reservation/reservation.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PaymentModule } from './Domains/payments/payment.module';
@@ -17,7 +17,7 @@ import { PaymentModule } from './Domains/payments/payment.module';
     }),
     EventEmitterModule.forRoot(),
     VenueModule,
-    EventModule,
+    ConcertModule,
     ReservationModule,
     PaymentModule
   ],

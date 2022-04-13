@@ -24,12 +24,12 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-        CREATE TABLE IF NOT EXISTS events (
+        CREATE TABLE IF NOT EXISTS concerts (
             id serial PRIMARY KEY,
             venue_id INT NOT NULL,
             name varchar (64) NOT NULL,
             duration SMALLINT NOT NULL,
-            event_date TIMESTAMP NOT NULL,
+            concert_date TIMESTAMP NOT NULL,
             description varchar (256) NOT NULL,
             FOREIGN KEY (venue_id) REFERENCES venues (id) ON DELETE CASCADE
         );
@@ -55,11 +55,12 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
     await queryRunner.query(`
         CREATE TABLE IF NOT EXISTS reservations (
             id serial PRIMARY KEY,
-            event_id INT NOT NULL,
+            concert_id INT NOT NULL,
             status ReservationStatus NOT NULL DEFAULT 'PENDING_PAYMENT',
             booking_reference uuid NOT NULL DEFAULT uuid_generate_v4(),
             created_at TIMESTAMP NOT NULL,
-            deadline TIMESTAMP NOT NULL
+            deadline TIMESTAMP NOT NULL,
+            FOREIGN KEY (concert_id) REFERENCES concerts (id) ON DELETE CASCADE ON UPDATE CASCADE
         );
     `);
 
@@ -77,17 +78,21 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
         );
     `);
 
+    await queryRunner.query(
+      `CREATE TYPE TicketStatus AS ENUM ('FREE', 'RESERVED', 'TICKETED')`
+    );
+
     await queryRunner.query(`
         CREATE TABLE IF NOT EXISTS tickets (
             id serial PRIMARY KEY,
-            issued BOOLEAN NOT NULL,
+            issued TicketStatus NOT NULL DEFAULT 'FREE',
             ticket_number VARCHAR (32) NOT NULL,
             price NUMERIC (7, 2) NOT NULL,
-            event_id INT NOT NULL,
+            concert_id INT NOT NULL,
             customer_id INT,
             reservation_id INT,
             seat_id INT NOT NULL,
-            FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE ON UPDATE CASCADE,
+            FOREIGN KEY (concert_id) REFERENCES concerts (id) ON DELETE CASCADE ON UPDATE CASCADE,
             FOREIGN KEY (customer_id) REFERENCES customers (id),
             FOREIGN KEY (reservation_id) REFERENCES reservations (id),
             FOREIGN KEY (seat_id) REFERENCES seat_structures (id)
@@ -109,14 +114,15 @@ export class CreateInitialTables1649277945107 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE payments`);
-    await queryRunner.query(`DROP TABLE tickets`);
-    await queryRunner.query(`DROP TABLE customers`);
-    await queryRunner.query(`DROP TABLE reservations`);
-    await queryRunner.query('DROP TYPE IF EXISTS ReservationStatus');
-    await queryRunner.query(`DROP TABLE seat_structures`);
-    await queryRunner.query(`DROP TABLE events`);
-    await queryRunner.query(`DROP TABLE addresses`);
-    await queryRunner.query(`DROP TABLE venues`);
+    await queryRunner.query(`DROP TABLE IF EXISTS payments`);
+    await queryRunner.query(`DROP TABLE IF EXISTS tickets`);
+    await queryRunner.query(`DROP TABLE IF EXISTS customers`);
+    await queryRunner.query(`DROP TABLE IF EXISTS reservations`);
+    await queryRunner.query(`DROP TABLE IF EXISTS seat_structures`);
+    await queryRunner.query(`DROP TABLE IF EXISTS concerts`);
+    await queryRunner.query(`DROP TABLE IF EXISTS addresses`);
+    await queryRunner.query(`DROP TABLE IF EXISTS venues`);
+    await queryRunner.query('DROP TYPE ReservationStatus');
+    await queryRunner.query('DROP TYPE TicketStatus');
   }
 }

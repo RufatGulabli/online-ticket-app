@@ -1,25 +1,28 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Concert } from 'src/Domains/concert/entity/concert.entity';
 import { Repository } from 'typeorm';
 
-import { CreateEventDto } from '../Domains/event/dto/create-event.dto';
+import { CreateConcertDto } from '../Domains/concert/dto/create-concert.dto';
 
 @Injectable()
 export class IsVenueBusyOnThisDate implements PipeTransform {
-  constructor(@InjectRepository(Event) private eventRepo: Repository<Event>) {}
+  constructor(
+    @InjectRepository(Concert) private concertRepo: Repository<Concert>
+  ) {}
 
-  async transform(dto: CreateEventDto) {
-    const event = await this.eventRepo
+  async transform(dto: CreateConcertDto) {
+    const concert = await this.concertRepo
       .createQueryBuilder()
-      .where('venue_id = :venueId AND event_date::date = :dtoDate::date', {
+      .where('venue_id = :venueId AND concert_date::date = :dtoDate::date', {
         venueId: dto.venueId,
-        dtoDate: dto.eventDate
+        dtoDate: dto.concertDate
       })
       .getOne();
 
-    if (event) {
+    if (concert) {
       throw new BadRequestException(
-        'There is another registered event on the same date in this venue.'
+        'There is another registered concert on the same date in this venue.'
       );
     }
 

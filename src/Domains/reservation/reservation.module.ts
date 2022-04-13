@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Reservation } from './entity/reservation.entity';
-import { Event } from '../event/entity/event.entity';
+import { Concert } from '../concert/entity/concert.entity';
 import { Customer } from '../customer/entity/customer.entity';
 import { SeatStructure } from '../seats-structure/entity/seat-structure.entity';
 import { ReservationService } from './reservation.service';
@@ -16,7 +16,7 @@ import { Payment } from '../payments/entity/payment.entity';
       Reservation,
       Customer,
       SeatStructure,
-      Event,
+      Concert,
       Ticket,
       Payment
     ])

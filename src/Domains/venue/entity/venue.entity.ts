@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { Address } from '../../address/entity/address.entity';
-import { Event } from '../../event/entity/event.entity';
+import { Concert } from '../../concert/entity/concert.entity';
 import { SeatStructure } from '../../seats-structure/entity/seat-structure.entity';
 
 @Entity('venues')
@@ -24,8 +24,8 @@ export class Venue {
   @OneToOne(() => Address, (address) => address.venue)
   address: Address;
 
-  @OneToMany(() => Event, (event) => event.venue)
-  events: Event[];
+  @OneToMany(() => Concert, (concerts) => concerts.venue)
+  concerts: Concert[];
 
   @OneToMany(() => SeatStructure, (seat) => seat.venue)
   seats: SeatStructure[];

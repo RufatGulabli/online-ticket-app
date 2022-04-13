@@ -2,17 +2,17 @@ import { Body, Controller, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController, CrudRequest, Override } from '@nestjsx/crud';
 
-import { Event } from './entity/event.entity';
-import { CreateEventDto } from './dto/create-event.dto';
+import { Concert } from './entity/concert.entity';
+import { CreateConcertDto } from './dto/create-concert.dto';
 import { IsVenueBusyOnThisDate } from '../../Pipes/is-venue-busy.pipe';
-import { EventService } from './event.service';
+import { ConcertService } from './concert.service';
 
 @Crud({
   model: {
-    type: Event
+    type: Concert
   },
   dto: {
-    create: CreateEventDto
+    create: CreateConcertDto
   },
   validation: { always: true }
   // query: {
@@ -25,16 +25,16 @@ import { EventService } from './event.service';
   //   },
   // },
 })
-@ApiTags('Event')
-@Controller('event')
-export class EventController implements CrudController<Event> {
-  constructor(public service: EventService) {}
+@ApiTags('Concerts')
+@Controller('concert')
+export class ConcertController implements CrudController<Concert> {
+  constructor(public service: ConcertService) {}
 
   @Override('createOneBase')
   async create(
     req: CrudRequest,
-    @Body(ValidationPipe, IsVenueBusyOnThisDate) dto: CreateEventDto
-  ): Promise<Event> {
+    @Body(ValidationPipe, IsVenueBusyOnThisDate) dto: CreateConcertDto
+  ): Promise<Concert> {
     return await this.service.createOne(req, dto);
   }
 }

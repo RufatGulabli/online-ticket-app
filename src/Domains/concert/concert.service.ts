@@ -6,57 +6,62 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 
 import { SeatStructure } from '../seats-structure/entity/seat-structure.entity';
 import { Venue } from '../venue/entity/venue.entity';
-import { CreateEventDto } from './dto/create-event.dto';
-import { Event } from './entity/event.entity';
+import { CreateConcertDto } from './dto/create-concert.dto';
+import { Concert } from './entity/concert.entity';
 import { Ticket } from '../ticket/entity/ticket.entity';
+import { TicketStatus } from 'src/Utils/enums';
 
 @Injectable()
-export class EventService extends TypeOrmCrudService<Event> {
+export class ConcertService extends TypeOrmCrudService<Concert> {
   constructor(
-    @InjectRepository(Event)
-    private eventRepo: Repository<Event>,
+    @InjectRepository(Concert)
+    private concertRepo: Repository<Concert>,
     @InjectRepository(Venue)
     private venueRepo: Repository<Venue>,
-    @InjectRepository(SeatStructure)
-    private seatRepo: Repository<SeatStructure>,
     @InjectRepository(Ticket)
     private ticketRepo: Repository<Ticket>
   ) {
-    super(eventRepo);
+    super(concertRepo);
   }
 
   @Override()
   async createOne(
     req: CrudRequest,
-    dto: DeepPartial<CreateEventDto>
-  ): Promise<Event> {
+    dto: DeepPartial<CreateConcertDto>
+  ): Promise<Concert> {
     return await getConnection().transaction(
       async (transactionalEntityManager) => {
         try {
-          const newEvent = this.eventRepo.create({
+          const newConcert = this.concertRepo.create({
             description: dto.description,
             name: dto.name,
-            eventDate: dto.eventDate,
+            concertDate: dto.concertDate,
             duration: dto.duration
           });
 
           const venue = await this.venueRepo.findOneOrFail({
             where: { id: dto.venueId },
-            relations: ['seats', 'events']
+            relations: ['seats', 'concerts']
           });
 
-          newEvent.venue = venue;
-          const savedEvent = await transactionalEntityManager.save(newEvent);
+          newConcert.venue = venue;
+          const savedConcert = await transactionalEntityManager.save(
+            newConcert
+          );
 
           const ticketProms: Promise<Ticket>[] = venue.seats.map((seat) => {
-            const ticketNumber = Math.ceil(
-              Math.random() * 1000000000
+            const randNumber = Math.ceil(
+              Math.random() * 10000000000
             ).toString();
 
+            const ticketNumber = `${randNumber.slice(0, 2)}-${randNumber.slice(
+              3
+            )}`;
+
             const ticket = this.ticketRepo.create({
-              issued: false,
+              issued: TicketStatus.FREE,
               price: dto.price,
-              event: savedEvent,
+              concert: savedConcert,
               ticketNumber,
               seat
             });
@@ -65,7 +70,7 @@ export class EventService extends TypeOrmCrudService<Event> {
 
           await Promise.all(ticketProms);
 
-          return savedEvent;
+          return savedConcert;
         } catch (exc) {
           throw new BadRequestException(exc.message);
         }

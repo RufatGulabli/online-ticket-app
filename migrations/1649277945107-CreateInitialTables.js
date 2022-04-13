@@ -53,7 +53,7 @@ var CreateInitialTables1649277945107 = /** @class */ (function () {
                         return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS addresses (\n            id SERIAL PRIMARY KEY,\n            zip VARCHAR (6) UNIQUE NOT NULL,\n            street VARCHAR (128) NOT NULL,\n            city VARCHAR (32) NOT NULL,\n            venue_id INT UNIQUE NOT NULL,\n            FOREIGN KEY (venue_id) REFERENCES venues (id) ON DELETE CASCADE\n        );\n    ")];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS events (\n            id serial PRIMARY KEY,\n            venue_id INT NOT NULL,\n            name varchar (64) NOT NULL,\n            duration SMALLINT NOT NULL,\n            event_date TIMESTAMP NOT NULL,\n            description varchar (256) NOT NULL,\n            FOREIGN KEY (venue_id) REFERENCES venues (id) ON DELETE CASCADE\n        );\n    ")];
+                        return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS concerts (\n            id serial PRIMARY KEY,\n            venue_id INT NOT NULL,\n            name varchar (64) NOT NULL,\n            duration SMALLINT NOT NULL,\n            concert_date TIMESTAMP NOT NULL,\n            description varchar (256) NOT NULL,\n            FOREIGN KEY (venue_id) REFERENCES venues (id) ON DELETE CASCADE\n        );\n    ")];
                     case 4:
                         _a.sent();
                         return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS seat_structures (\n            id serial PRIMARY KEY,\n            row_no SMALLINT NOT NULL,\n            column_no VARCHAR(1) NOT NULL,\n            last_seat_in_row BOOLEAN NOT NULL,\n            sign VARCHAR (4) NOT NULL,\n            venue_id INT NOT NULL,\n            FOREIGN KEY (venue_id) REFERENCES venues (id) ON DELETE CASCADE ON UPDATE CASCADE,\n            UNIQUE (venue_id, sign)\n        );\n    ")];
@@ -62,17 +62,20 @@ var CreateInitialTables1649277945107 = /** @class */ (function () {
                         return [4 /*yield*/, queryRunner.query("CREATE TYPE ReservationStatus AS ENUM ('PENDING_PAYMENT', 'EXPIRED', 'APPROVED')")];
                     case 6:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS reservations (\n            id serial PRIMARY KEY,\n            event_id INT NOT NULL,\n            status ReservationStatus NOT NULL DEFAULT 'PENDING_PAYMENT',\n            booking_reference uuid NOT NULL DEFAULT uuid_generate_v4(),\n            created_at TIMESTAMP NOT NULL,\n            deadline TIMESTAMP NOT NULL\n        );\n    ")];
+                        return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS reservations (\n            id serial PRIMARY KEY,\n            concert_id INT NOT NULL,\n            status ReservationStatus NOT NULL DEFAULT 'PENDING_PAYMENT',\n            booking_reference uuid NOT NULL DEFAULT uuid_generate_v4(),\n            created_at TIMESTAMP NOT NULL,\n            deadline TIMESTAMP NOT NULL,\n            FOREIGN KEY (concert_id) REFERENCES concerts (id) ON DELETE CASCADE ON UPDATE CASCADE\n        );\n    ")];
                     case 7:
                         _a.sent();
                         return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS customers (\n            id serial PRIMARY KEY,\n            first_name VARCHAR (64) NOT NULL,\n            last_name VARCHAR (64) NOT NULL,\n            email VARCHAR (128),\n            seat_id INT NOT NULL,\n            reservation_id INT NOT NULL,\n            FOREIGN KEY (reservation_id) REFERENCES reservations (id),\n            FOREIGN KEY (seat_id) REFERENCES seat_structures (id),\n            UNIQUE (seat_id, reservation_id)\n        );\n    ")];
                     case 8:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS tickets (\n            id serial PRIMARY KEY,\n            issued BOOLEAN NOT NULL,\n            ticket_number VARCHAR (32) NOT NULL,\n            price NUMERIC (7, 2) NOT NULL,\n            event_id INT NOT NULL,\n            customer_id INT,\n            reservation_id INT,\n            seat_id INT NOT NULL,\n            FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE ON UPDATE CASCADE,\n            FOREIGN KEY (customer_id) REFERENCES customers (id),\n            FOREIGN KEY (reservation_id) REFERENCES reservations (id),\n            FOREIGN KEY (seat_id) REFERENCES seat_structures (id)\n        );\n    ")];
+                        return [4 /*yield*/, queryRunner.query("CREATE TYPE TicketStatus AS ENUM ('FREE', 'RESERVED', 'TICKETED')")];
                     case 9:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS payments (\n            id serial PRIMARY KEY,\n            amount NUMERIC (7, 2) NOT NULL,\n            status BOOLEAN NOT NULL,\n            rejection_reason VARCHAR(32) NOT NULL,\n            transaction_no VARCHAR(16) NOT NULL,\n            create_date TIMESTAMP NOT NULL,\n            reservation_id INT NOT NULL,\n            FOREIGN KEY (reservation_id) REFERENCES reservations (id)\n        )\n    ")];
+                        return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS tickets (\n            id serial PRIMARY KEY,\n            issued TicketStatus NOT NULL DEFAULT 'FREE',\n            ticket_number VARCHAR (32) NOT NULL,\n            price NUMERIC (7, 2) NOT NULL,\n            concert_id INT NOT NULL,\n            customer_id INT,\n            reservation_id INT,\n            seat_id INT NOT NULL,\n            FOREIGN KEY (concert_id) REFERENCES concerts (id) ON DELETE CASCADE ON UPDATE CASCADE,\n            FOREIGN KEY (customer_id) REFERENCES customers (id),\n            FOREIGN KEY (reservation_id) REFERENCES reservations (id),\n            FOREIGN KEY (seat_id) REFERENCES seat_structures (id)\n        );\n    ")];
                     case 10:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query("\n        CREATE TABLE IF NOT EXISTS payments (\n            id serial PRIMARY KEY,\n            amount NUMERIC (7, 2) NOT NULL,\n            status BOOLEAN NOT NULL,\n            rejection_reason VARCHAR(32) NOT NULL,\n            transaction_no VARCHAR(16) NOT NULL,\n            create_date TIMESTAMP NOT NULL,\n            reservation_id INT NOT NULL,\n            FOREIGN KEY (reservation_id) REFERENCES reservations (id)\n        )\n    ")];
+                    case 11:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -83,32 +86,35 @@ var CreateInitialTables1649277945107 = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("DROP TABLE payments")];
+                    case 0: return [4 /*yield*/, queryRunner.query("DROP TABLE IF EXISTS payments")];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE tickets")];
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE IF EXISTS tickets")];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE customers")];
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE IF EXISTS customers")];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE reservations")];
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE IF EXISTS reservations")];
                     case 4:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query('DROP TYPE IF EXISTS ReservationStatus')];
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE IF EXISTS seat_structures")];
                     case 5:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE seat_structures")];
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE IF EXISTS concerts")];
                     case 6:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE events")];
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE IF EXISTS addresses")];
                     case 7:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE addresses")];
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE IF EXISTS venues")];
                     case 8:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE venues")];
+                        return [4 /*yield*/, queryRunner.query('DROP TYPE ReservationStatus')];
                     case 9:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query('DROP TYPE TicketStatus')];
+                    case 10:
                         _a.sent();
                         return [2 /*return*/];
                 }

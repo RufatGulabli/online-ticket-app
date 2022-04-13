@@ -7,6 +7,7 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { Reservation } from './entity/reservation.entity';
 import { ReservationService } from './reservation.service';
 import { PaymentDetails } from 'src/Utils/enums';
+import { isSelectedSeatReserved } from 'src/Pipes/is-seat-reserved.pipe';
 
 @Crud({
   model: {
@@ -32,7 +33,7 @@ export class ReservationController implements CrudController<Reservation> {
 
   @Override('createOneBase')
   async create(
-    @Body(ValidationPipe) dto: CreateReservationDto
+    @Body(ValidationPipe, isSelectedSeatReserved) dto: CreateReservationDto
   ): Promise<Reservation> {
     return await this.service.create(dto);
   }

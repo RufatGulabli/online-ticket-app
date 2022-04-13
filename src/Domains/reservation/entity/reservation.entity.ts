@@ -1,3 +1,4 @@
+import { Concert } from 'src/Domains/concert/entity/concert.entity';
 import { Ticket } from 'src/Domains/ticket/entity/ticket.entity';
 import {
   Column,
@@ -11,7 +12,6 @@ import {
 
 import { ReservationStatus } from '../../../Utils/enums';
 import { Customer } from '../../customer/entity/customer.entity';
-import { Event } from '../../event/entity/event.entity';
 
 @Entity('reservations')
 export class Reservation {
@@ -35,9 +35,9 @@ export class Reservation {
   @Column('timestamp')
   deadline: Date;
 
-  @ManyToOne(() => Event, (event) => event.reservations)
-  @JoinColumn({ name: 'event_id' })
-  event: Event;
+  @ManyToOne(() => Concert, (concert) => concert.reservations)
+  @JoinColumn({ name: 'concert_id' })
+  concert: Concert;
 
   @OneToMany(() => Customer, (customer) => customer.reservation)
   customers: Customer[];

@@ -6,7 +6,7 @@ import {
   IsArray,
   IsNumber,
   Min,
-  ValidateNested,
+  ValidateNested
 } from 'class-validator';
 import { CreateCustomerDto } from 'src/Domains/customer/dto/create-customer.dto';
 
@@ -14,7 +14,7 @@ export class CreateReservationDto {
   @ApiProperty({ minimum: 1 })
   @IsNumber()
   @Min(1)
-  eventId: number;
+  concertId: number;
 
   @ApiProperty({ type: () => [CreateCustomerDto], minItems: 1, maxItems: 6 })
   @IsArray()

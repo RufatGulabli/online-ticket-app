@@ -8,7 +8,7 @@ import {
   Min
 } from 'class-validator';
 
-export class CreateEventDto {
+export class CreateConcertDto {
   @ApiProperty({ minLength: 3, maxLength: 128 })
   @IsString()
   @Length(3, 128)
@@ -16,7 +16,7 @@ export class CreateEventDto {
 
   @ApiProperty({ format: 'DD.MMM.YYYY:HH.mm' })
   @IsDateString({ minDate: new Date() })
-  eventDate: Date;
+  concertDate: Date;
 
   @ApiProperty({ minLength: 3, maxLength: 2056 })
   @IsString()
