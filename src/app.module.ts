@@ -6,6 +6,7 @@ import { ConcertModule } from './Domains/concert/concert.module';
 import { ReservationModule } from './Domains/reservation/reservation.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PaymentModule } from './Domains/payments/payment.module';
+import { SeatStructureModule } from './Domains/seats-structure/seat-structure.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { PaymentModule } from './Domains/payments/payment.module';
     VenueModule,
     ConcertModule,
     ReservationModule,
-    PaymentModule
+    PaymentModule,
+    SeatStructureModule
   ],
   controllers: [],
   providers: []

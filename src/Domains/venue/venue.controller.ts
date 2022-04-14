@@ -13,15 +13,12 @@ import { ApiTags } from '@nestjs/swagger';
   dto: {
     create: CreateVenueDto
   },
-  validation: { always: true }
-  // query: {
-  //   join: {
-  //     address: {
-  //       eager: true,
-  //       alias: 'address',
-  //     },
-  //   },
-  // },
+  validation: { always: true },
+  query: {
+    join: {
+      address_id: { eager: true, alias: 'address' }
+    }
+  }
 })
 @ApiTags('Venue')
 @Controller('venue')

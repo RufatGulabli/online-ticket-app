@@ -10,6 +10,12 @@ export enum TicketStatus {
   TICKETED = 'TICKETED'
 }
 
+export enum SellingOption {
+  EVEN = 'even',
+  ALL_TOGETHER = 'all-together',
+  AVOID_ONE = 'avoid-one'
+}
+
 export interface PaymentDetails {
   reservationId: number;
   status: boolean;

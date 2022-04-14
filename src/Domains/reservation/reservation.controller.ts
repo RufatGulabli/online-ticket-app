@@ -16,15 +16,14 @@ import { isSelectedSeatReserved } from 'src/Pipes/is-seat-reserved.pipe';
   dto: {
     create: CreateReservationDto
   },
-  validation: { always: true }
-  // query: {
-  //   join: {
-  //     address: {
-  //       eager: true,
-  //       alias: 'address',
-  //     },
-  //   },
-  // },
+  validation: { always: true },
+  query: {
+    join: {
+      concert: {
+        eager: true
+      }
+    }
+  }
 })
 @ApiTags('Reservation')
 @Controller('reservation')
