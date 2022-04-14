@@ -4,20 +4,6 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ResponseInterceptor } from './Interceptors/ResponseInterceptor';
 import { GlobalExceptionFilter } from './Exceptions/GlobalExceptionFilter';
-import { CrudConfigService } from '@nestjsx/crud';
-// This should be configured before import of AppModule due to TS Decorators
-CrudConfigService.load({
-  query: {
-    limit: 10,
-    cache: 100
-  },
-  routes: {
-    deleteOneBase: {
-      returnDeleted: true
-    }
-  }
-});
-
 import { AppModule } from './app.module';
 
 async function bootstrap() {

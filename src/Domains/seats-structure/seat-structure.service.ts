@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SellingOption, TicketStatus } from 'src/Utils/enums';
 import { Repository } from 'typeorm';
 import { Ticket } from '../ticket/entity/ticket.entity';
-import { GetSeatsParamsDto } from './dto/get-seats-params.dto';
 
 import { SeatStructure } from './entity/seat-structure.entity';
 
@@ -14,8 +13,6 @@ export interface ISeatService {
     option: SellingOption;
   }): Promise<SeatStructure[]>;
 }
-
-// export const ISeatService = Symbol('ISeatService');
 
 @Injectable()
 export class SeatStructureService implements ISeatService {

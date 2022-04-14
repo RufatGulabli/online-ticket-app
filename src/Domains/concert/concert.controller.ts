@@ -14,16 +14,13 @@ import { ConcertService } from './concert.service';
   dto: {
     create: CreateConcertDto
   },
-  validation: { always: true }
-  // query: {
-  //   join: {
-  //     venue: {
-  //       persist: ['name'],
-  //       eager: true,
-  //       required: true,
-  //     },
-  //   },
-  // },
+  validation: { always: true },
+  query: {
+    alwaysPaginate: true,
+    join: {
+      venue: { eager: true }
+    }
+  }
 })
 @ApiTags('Concerts')
 @Controller('concert')

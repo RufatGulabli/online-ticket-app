@@ -16,7 +16,7 @@ import { ApiTags } from '@nestjs/swagger';
   validation: { always: true },
   query: {
     join: {
-      address_id: { eager: true, alias: 'address' }
+      address: { eager: true, alias: 'address' }
     }
   }
 })

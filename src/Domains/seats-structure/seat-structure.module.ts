@@ -4,11 +4,17 @@ import { Ticket } from '../ticket/entity/ticket.entity';
 
 import { SeatStructure } from './entity/seat-structure.entity';
 import { SeatStructureController } from './seat-structure.controller';
-import { ISeatService, SeatStructureService } from './seat-structure.service';
+import { SeatStructureService } from './seat-structure.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SeatStructure, Ticket])],
   controllers: [SeatStructureController],
-  providers: [SeatStructureService]
+  providers: [
+    SeatStructureService,
+    {
+      provide: 'ISeatService',
+      useClass: SeatStructureService
+    }
+  ]
 })
 export class SeatStructureModule {}

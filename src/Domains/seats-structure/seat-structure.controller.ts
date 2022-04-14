@@ -1,15 +1,17 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Inject, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { SellingOption } from 'src/Utils/enums';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import { GetSeatsParamsDto } from './dto/get-seats-params.dto';
 
 import { SeatStructure } from './entity/seat-structure.entity';
-import { ISeatService, SeatStructureService } from './seat-structure.service';
+import { ISeatService } from './seat-structure.service';
 
 @ApiTags('Seats')
 @Controller('seats')
 export class SeatStructureController {
-  constructor(private seatService: SeatStructureService) {}
+  constructor(
+    @Inject('ISeatService') private readonly seatService: ISeatService
+  ) {}
 
   @Get('/')
   public async getEvenSeats(

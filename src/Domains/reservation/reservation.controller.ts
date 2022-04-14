@@ -19,10 +19,11 @@ import { isSelectedSeatReserved } from 'src/Pipes/is-seat-reserved.pipe';
   validation: { always: true },
   query: {
     join: {
-      concert: {
-        eager: true
-      }
-    }
+      concert: { eager: true },
+      tickets: { eager: true },
+      customers: { eager: true }
+    },
+    alwaysPaginate: true
   }
 })
 @ApiTags('Reservation')
